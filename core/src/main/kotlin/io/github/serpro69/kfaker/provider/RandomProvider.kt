@@ -1,6 +1,7 @@
 package io.github.serpro69.kfaker.provider
 
 import io.github.serpro69.kfaker.*
+import java.lang.reflect.Array.newInstance
 import java.util.*
 import kotlin.Boolean
 import kotlin.Char
@@ -47,6 +48,7 @@ class RandomProvider internal constructor(random: Random) {
                     when {
                         it.isPrimitive() -> it.randomPrimitive()
                         it.java.isEnum -> it.randomEnum()
+                        it.java.isArray -> it.randomArray()
                         // TODO: 16.06.19 Arrays, Lists, Maps, (other collections?)
                         else -> it.randomClassInstance()
                     }
@@ -87,7 +89,6 @@ class RandomProvider internal constructor(random: Random) {
             String::class -> randomService.nextString()
             Char::class -> randomService.nextChar()
             Boolean::class -> randomService.nextBoolean()
-            // TODO: 16.06.19 Arrays
             else -> null
         }
     }
@@ -97,5 +98,31 @@ class RandomProvider internal constructor(random: Random) {
      */
     private fun KClass<*>.randomEnum(): Any? {
         return randomService.randomValue(this.java.enumConstants)
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun KClass<*>.randomArray(): Any? {
+        val componentType = java.componentType.kotlin
+        if (componentType.java.isArray) {
+            TODO("Support arrays with more than one dimension")
+        }
+        if (componentType != String::class && componentType.isPrimitive()) {
+            return when (componentType) {
+                Double::class -> DoubleArray(10) { randomService.nextDouble() }
+                Float::class -> FloatArray(10) { randomService.nextFloat() }
+                Long::class -> LongArray(10) { randomService.nextLong() }
+                Int::class -> IntArray(10) { randomService.nextInt() }
+                Short::class -> ShortArray(10) { randomService.nextInt().toShort() }
+                Byte::class -> ByteArray(10) { randomService.nextInt().toByte() }
+                Char::class -> CharArray(10) { randomService.nextChar() }
+                Boolean::class -> BooleanArray(10) { randomService.nextBoolean() }
+                else -> throw IllegalStateException("Should not happen")
+            }
+        }
+        val array= newInstance(componentType.java, 10) as Array<Any?>
+        for ( i in array.indices) {
+            array[i] = componentType.randomClassInstance()
+        }
+        return array
     }
 }

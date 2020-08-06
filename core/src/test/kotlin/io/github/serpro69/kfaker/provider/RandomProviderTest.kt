@@ -42,11 +42,11 @@ class RandomProviderTest : DescribeSpec({
             val long: Long,
             val int: Int,
             val short: Short,
-//            val byte: Byte, // TODO: 11.06.19
+            val byte: Byte,
             val string: String,
             val char: Char,
-            val boolean: Boolean
-//            val array: Array<String> // TODO: 12.06.19
+            val boolean: Boolean,
+            val array: Array<String>
         )
 
         context("creating a random instance of the class") {
@@ -112,6 +112,32 @@ class RandomProviderTest : DescribeSpec({
 
     describe("a TestClass with non-empty constructor with enum type") {
         class TestClass(val enum: TestEnum)
+
+        context("creating a random instance of the class") {
+            val testClass: TestClass = randomProvider.randomClassInstance()
+
+            it("it should be instance of TestClass") {
+                testClass shouldBe instanceOf(TestClass::class)
+            }
+        }
+    }
+
+    describe("a TestClass with non-empty constructor with arrays") {
+        class Foo(val string: String?)
+        class TestClass(
+            val double: DoubleArray,
+            val float: FloatArray,
+            val long: LongArray,
+            val int: IntArray,
+            val short: ShortArray,
+            val byte: ByteArray,
+            val string: Array<String>,
+            val char: CharArray,
+            val boolean: BooleanArray,
+            val foo: Array<Foo>,
+            val fooNullable: Array<Foo?>,
+            val multi: Array<Array<Int>>
+        )
 
         context("creating a random instance of the class") {
             val testClass: TestClass = randomProvider.randomClassInstance()
