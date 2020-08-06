@@ -1,5 +1,6 @@
 package io.github.serpro69.kfaker.provider
 
+import io.github.serpro69.kfaker.ArraySize
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.instanceOf
@@ -8,7 +9,7 @@ import java.util.*
 
 @Suppress("unused")
 class RandomProviderTest : DescribeSpec({
-    val randomProvider = RandomProvider(Random())
+    val randomProvider = RandomProvider(Random(), ArraySize(0, 10))
 
     describe("a TestClass with an empty constructor") {
         class TestClass
@@ -135,8 +136,7 @@ class RandomProviderTest : DescribeSpec({
             val char: CharArray,
             val boolean: BooleanArray,
             val foo: Array<Foo>,
-            val fooNullable: Array<Foo?>,
-            val multi: Array<Array<Int>>
+            val fooNullable: Array<Foo?>
         )
 
         context("creating a random instance of the class") {

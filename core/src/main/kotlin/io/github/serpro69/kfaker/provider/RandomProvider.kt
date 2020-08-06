@@ -20,7 +20,7 @@ import kotlin.reflect.*
  * Inspired by [Creating a random instance of any class in Kotlin blog post](https://blog.kotlin-academy.com/creating-a-random-instance-of-any-class-in-kotlin-b6168655b64a).
  */
 @Suppress("unused")
-class RandomProvider internal constructor(random: Random) {
+class RandomProvider internal constructor(random: Random, private val arraySize: ArraySize) {
     private val randomService = RandomService(random)
 
     /**
@@ -108,21 +108,23 @@ class RandomProvider internal constructor(random: Random) {
         }
         if (componentType != String::class && componentType.isPrimitive()) {
             return when (componentType) {
-                Double::class -> DoubleArray(10) { randomService.nextDouble() }
-                Float::class -> FloatArray(10) { randomService.nextFloat() }
-                Long::class -> LongArray(10) { randomService.nextLong() }
-                Int::class -> IntArray(10) { randomService.nextInt() }
-                Short::class -> ShortArray(10) { randomService.nextInt().toShort() }
-                Byte::class -> ByteArray(10) { randomService.nextInt().toByte() }
-                Char::class -> CharArray(10) { randomService.nextChar() }
-                Boolean::class -> BooleanArray(10) { randomService.nextBoolean() }
+                Double::class -> DoubleArray(randomArraySize()) { randomService.nextDouble() }
+                Float::class -> FloatArray(randomArraySize()) { randomService.nextFloat() }
+                Long::class -> LongArray(randomArraySize()) { randomService.nextLong() }
+                Int::class -> IntArray(randomArraySize()) { randomService.nextInt() }
+                Short::class -> ShortArray(randomArraySize()) { randomService.nextInt().toShort() }
+                Byte::class -> ByteArray(randomArraySize()) { randomService.nextInt().toByte() }
+                Char::class -> CharArray(randomArraySize()) { randomService.nextChar() }
+                Boolean::class -> BooleanArray(randomArraySize()) { randomService.nextBoolean() }
                 else -> throw IllegalStateException("Should not happen")
             }
         }
-        val array= newInstance(componentType.java, 10) as Array<Any?>
+        val array= newInstance(componentType.java, randomArraySize()) as Array<Any?>
         for ( i in array.indices) {
             array[i] = componentType.randomClassInstance()
         }
         return array
     }
+
+    private fun randomArraySize() = randomService.nextInt(arraySize.minSize, arraySize.maxSize)
 }

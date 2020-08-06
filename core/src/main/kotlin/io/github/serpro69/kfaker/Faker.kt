@@ -14,7 +14,7 @@ class Faker @JvmOverloads constructor(internal val fakerConfig: FakerConfig = Fa
 
     val unique = GlobalUniqueDataDataProvider()
 
-    val randomProvider: RandomProvider = RandomProvider(fakerConfig.random)
+    val randomProvider: RandomProvider = RandomProvider(fakerConfig.random, fakerConfig.arraySize)
 
     val separator: Separator
     val address: Address
